@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where Should We Eat?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f4e5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .option-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .option-card.selected {
+            box-shadow: 0 0 0 3px #ff6b6b;
+        }
+        
+        .option-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .option-card:hover .upload-overlay {
+            opacity: 1;
+        }
+        
+        .option-label {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .option-text {
+            flex-grow: 1;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+        
+        .checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff6b6b;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .checkbox:checked {
+            background-color: #ff6b6b;
+        }
+        
+        .checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .image-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Where Do You Want to Eat?</h1>
+        
+        <div class="options-grid" id="restaurant-options">
+            <!-- Restaurant options will be added by JavaScript -->
+        </div>
+        
+        <button id="submit-btn" class="submit-btn" disabled>Confirm Choice</button>
+    </div>
+
+    <script>
+        // Restaurant data
+        const restaurants = [
+            { name: "TINY BREWS", image: "" },
+            { name: "MARTINELLI PIZZA DELI", image: "https://images.unsplash.com/photo-1590947132387-155cc02f3212?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGl6emF8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" },
+            { name: "FOODCOURT", image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zm9vZGNvdXJ0fGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" },
+            { name: "CHICKEN BOMB", image: "https://images.unsplash.com/photo-1606755456206-b25206b1873f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2hpY2tlbiUyMGZvb2R8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" },
+            { name: "FOREVER CAFE", image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FmZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" },
+            { name: "SUTUWAKI", image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c3VzaGl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" }
+        ];
+        
+        // Selected restaurant
+        let selectedRestaurant = null;
+        const userImages = {};
+        
+        // Function to create option cards
+        function createOptionCard(restaurant) {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.dataset.value = restaurant.name;
+            
+            card.innerHTML = `
+                <div class="relative">
+                    <img src="${restaurant.image}" alt="${restaurant.name}" class="option-image">
+                    <div class="upload-overlay">
+                        <span>Click to add your photo</span>
+                    </div>
+                    <input type="file" class="image-input" accept="image/*" style="display: none;">
+                </div>
+                <div class="option-label">
+                    <span class="option-text">${restaurant.name}</span>
+                    <input type="checkbox" class="checkbox" name="restaurant" id="restaurant-${restaurant.name.replace(/\s+/g, '-')}">
+                </div>
+            `;
+            
+            // Add click event to select the restaurant
+            card.addEventListener('click', function(e) {
+                // Don't trigger on checkbox click
+                if (e.target.tagName === 'INPUT') return;
+                
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    // Deselect other options
+                    document.querySelectorAll('.option-card').forEach(otherCard => {
+                        if (otherCard !== card) {
+                            otherCard.classList.remove('selected');
+                            otherCard.querySelector('input[type="checkbox"]').checked = false;
+                        }
+                    });
+                    
+                    card.classList.add('selected');
+                    selectedRestaurant = restaurant.name;
+                    document.getElementById('submit-btn').disabled = false;
+                } else {
+                    card.classList.remove('selected');
+                    selectedRestaurant = null;
+                    document.getElementById('submit-btn').disabled = true;
+                }
+            });
+            
+            // Add click event to upload image
+            const imageContainer = card.querySelector('.option-image');
+            const uploadOverlay = card.querySelector('.upload-overlay');
+            const fileInput = card.querySelector('.image-input');
+            
+            imageContainer.addEventListener('click', function(e) {
+                e.stopPropagation();
+                fileInput.click();
+            });
+            
+            uploadOverlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.match('image.*')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imageContainer.src = event.target.result;
+                        userImages[restaurant.name] = event.target.result; // Store Base64 image
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            return card;
+        }
+        
+        // Initialize the page
+        function initPage() {
+            const container = document.getElementById('restaurant-options');
+            
+            restaurants.forEach(restaurant => {
+                container.appendChild(createOptionCard(restaurant));
+            });
+            
+            // Submit button handler
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                if (selectedRestaurant) {
+                    // Store selection in localStorage
+                    localStorage.setItem('selectedRestaurant', selectedRestaurant);
+                    
+                    // Store user image if available
+                    if (userImages[selectedRestaurant]) {
+                        localStorage.setItem('restaurantImage', userImages[selectedRestaurant]);
+                    }
+                    
+                    // Redirect to next page
+                    window.location.href = 'after.html';
+                }
+            });
+        }
+        
+        // Initialize the page when loaded
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Message for Someone Special</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap');
+        
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #ffb8b8;
+            --dark: #2f3542;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f7f1e3;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.5s;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary);
+            font-size: 5.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            transform: rotate(45deg);
+            animation: float 4s infinite ease-in-out;
+            opacity: 0.7;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -15px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -15px;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: rotate(45deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(-15px); }
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+            margin: 1rem 0;
+            min-height: 120px;
+            transition: border 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .confession-box {
+            background: linear-gradient(45deg, #f6e58d, #ffbe76);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confession-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .response-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .response-btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .yes-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .no-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .response-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+            color: var(--primary);
+        }
+        
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hearts-container" id="heartsContainer"></div>
+        
+        <section id="intro-section">
+            <h1>For Shiela Mae Abrillo</h1>
+            <br>
+            <h1>A Little Something About Me</h1>
+            <p>Before I ask you something important, I wanted to properly introduce myself first...</p>
+            
+            <p class="text-sm text-gray-500 mt-4">Hi! I hope this doesn’t come off too random, but I just wanted introuduce myself.
+
+I’m Adam Jasper Balangiao, 20 years old, born on July 4, 2004. I studied high school in Cebu, and I’m now taking BSIT (Bachelor of Science in Information Technology) in college here in Ormoc.
+
+I’m passionate about videography and photography—there’s just something special about telling stories through moments.Usually mga sports videography.
+
+I came across your video on TikTok—just a stranger passing through my FYP—but honestly, your smile and eyes stood out in a way that’s hard to explain (way atik hahaha). di ra pajud to kausa ra hahaha. thats why i message you and the crazy part? We study at the same school. What are the odds, right? hehehe
+
+I know we haven’t met, and this might be unexpected, but I wanted to say: you seem like someone worth knowing.
+
+Im sure theres a lot of guys that you see but i swear they're not cool as me. hehehe
+</p>
+            
+            <button id="proceed-btn" class="btn" onclick="location.href='index.html'" >Proceed to Special Question</button>
+        </section>
+        
+        <section id="question-section" class="hidden">
+            <div class="confession-box">
+                <h1 class="text-2xl font-bold text-white">Here's My Question for You...</h1>
+                <p class="text-lg mt-4 text-white">Would you go on a date with me? ☺️</p>
+                
+                <div class="response-buttons">
+                    <button id="yes-btn" class="response-btn yes-btn">Yes!</button>
+                    <button id="no-btn" class="response-btn no-btn">No...</button>
+                </div>
+            </div>
+            
+            <div id="result-message" class="result-message"></div>
+        </section>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const colors = ['#ff6b6b', '#ffb8b8', '#ff9e9e', '#ff7676'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.top = `${Math.random() * 100}%`;
+                heart.style.width = `${10 + Math.random() * 20}px`;
+                heart.style.height = heart.style.width;
+                heart.style.animationDelay = `${Math.random() * 4}s`;
+                heart.style.opacity = 0.3 + Math.random() * 0.5;
+                container.appendChild(heart);
+            }
+        }
+        
+        // Handle button clicks
+        document.getElementById('proceed-btn').addEventListener('click', function() {
+            const bioText = document.getElementById('bio-text').value.trim();
+            
+            if (bioText === '') {
+                alert("Please introduce yourself first before proceeding!");
+                return;
+            }
+            
+            document.getElementById('intro-section').classList.add('hidden');
+            document.getElementById('question-section').classList.remove('hidden');
+            document.body.style.backgroundColor = '#ffeaa7';
+            
+            // Start floating hearts animation when question appears
+            createHearts();
+        });
+        
+        // Handle response buttons
+        document.getElementById('yes-btn').addEventListener('click', function() {
+            const resultMessage = document.getElementById('result-message');
+            resultMessage.textContent = "Yay! 🎉 I'm so happy! I'll message you soon to plan our date!";
+            resultMessage.classList.add('show');
+            celebrate();
+        });
+        
+        document.getElementById('no-btn').addEventListener('click', function() {
+            const resultMessage = document.getElementById('result-message');
+            resultMessage.textContent = "That's okay, I understand. Thanks for being honest with me.";
+            resultMessage.classList.add('show');
+        });
+        
+        // Celebration effect
+        function celebrate() {
+            const container = document.querySelector('.container');
+            container.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                container.style.transform = 'translateY(0)';
+                
+                // Create some extra floating hearts for celebration
+                createHearts();
+            }, 300);
+        }
+    </script>
+</body>
+</html>
